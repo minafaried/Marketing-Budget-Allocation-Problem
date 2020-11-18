@@ -88,8 +88,26 @@ def crossover(selection,marketing_channels_num): #mina
     return crossover
 
 
-def mutation_uniform(bit_filp, crossover,marketing_channels_num, investment_lower_upper): #peter
-    pass
+def mutation_uniform(crossover,investment_lower_upper): #peter
+    for i in range(0,len(crossover)):
+        delta_lower = 0
+        delta_upper = 0
+        delta = 0
+        for j in range(0,len(crossover[i])):
+            delta_lower = crossover[i][j] - investment_lower_upper[j][0]
+            delta_upper = investment_lower_upper[j][1] - crossover[i][j]
+            r1 = random.uniform(0, 1)
+            if r1 <= 0.5:
+                delta = delta_lower
+            elif r1 > 0.5:
+                delta = delta_upper
+            r2 = random.uniform(0, delta)
+            if delta == delta_lower:
+                crossover[i][j] = crossover[i][j] - r2
+            elif delta == delta_upper:
+                crossover[i][j] = crossover[i][j] + r2
+    return crossover
+
 def mutation_non_uniform(bit_filp, crossover,marketing_channels_num, investment_lower_upper): #peter
     pass
 
