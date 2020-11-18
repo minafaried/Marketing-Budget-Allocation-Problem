@@ -108,8 +108,25 @@ def mutation_uniform(crossover,investment_lower_upper): #peter
                 crossover[i][j] = crossover[i][j] + r2
     return crossover
 
-def mutation_non_uniform(bit_filp, crossover,marketing_channels_num, investment_lower_upper): #peter
-    pass
+def mutation_non_uniform(crossover,investment_lower_upper ,max_num_generation , current_generation): #peter
+    t = current_generation
+    T = max_num_generation
+    b = 1.5  #dependency factor
+    for i in range(0,len(crossover)):
+        delta_lower = 0
+        delta_upper = 0
+        y = 0
+        for j in range(0,len(crossover[i])):
+            delta_lower = crossover[i][j] - investment_lower_upper[j][0]
+            delta_upper = investment_lower_upper[j][1] - crossover[i][j]
+            r1 = random.uniform(0, 1)
+            if r1 <= 0.5:
+                y = delta_lower
+            elif r1 > 0.5:
+                y = delta_upper
+            R = random.uniform(0, 1)
+            crossover[i][j] = y * (1 - pow(R, pow(1-t/T ,b)))
+    return crossover
 
 def replacement(population, mutation,ROI): #mina
     # success_prop [.3,.3,.5,.2,.2]
