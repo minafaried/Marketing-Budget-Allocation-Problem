@@ -44,7 +44,7 @@ def init(population_num, marketing_channels_num,budget,ROI,investment_lower_uppe
                 tempbudged-=r
                 chromosome.append(r)
             elif tempbudged<r and tempbudged !=0:
-                chromosome.append(r-tempbudged)
+                chromosome.append(tempbudged)
                 tempbudged=0
             else:
                 chromosome.append(0)
