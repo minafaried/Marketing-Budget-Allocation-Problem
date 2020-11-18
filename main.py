@@ -111,8 +111,28 @@ def mutation_uniform(crossover,investment_lower_upper): #peter
 def mutation_non_uniform(bit_filp, crossover,marketing_channels_num, investment_lower_upper): #peter
     pass
 
-def replacement(population, mutation,marketing_channels_num,investment_lower_upper,budget): #mina
-    pass
+def replacement(population, mutation,ROI): #mina
+    # success_prop [.3,.3,.5,.2,.2]
+    new_gen = []
+    mProp = []
+    for x in range(0, len(mutation)):
+        mSum = 0
+        for y in range(0, len(mutation[x])):
+            mSum += mutation[x][y] * (ROI[y]/100)
+        mProp.append(mSum)
+    for i in range(0, len(population)):
+        pSum = 0
+        for j in range(0, len(population[i])):
+            pSum += population[i][j] * (ROI[j]/100)
+        flag = False
+        for j in range(0, len(mProp)):
+            if mProp[j] > pSum and mutation[j] not in new_gen:
+                new_gen.append(mutation[j])
+                flag = True
+                break
+        if flag == False:
+            new_gen.append(population[i])
+    return new_gen
 
 
 def select_the_fittest(population,marketing_channels_num,investment_lower_upper,budget):  #peter
