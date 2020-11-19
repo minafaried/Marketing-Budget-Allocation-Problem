@@ -151,10 +151,16 @@ def replacement(population, mutation,ROI): #mina
             new_gen.append(population[i])
     return new_gen
 
-
-def select_the_fittest(population,marketing_channels_num,investment_lower_upper,budget):  #peter
-    pass
-
+def select_the_fittest(population,ROI):  #peter
+    fittest_index = 0
+    for i in range(0,len(population)):
+        tempSum =0
+        geneSum =0
+        for j in range(0,len(population[i])):
+            tempSum += population[i][j] * (ROI[j]/100)
+        if tempSum > geneSum:
+            fittest_index = i
+    return population[fittest_index]
 
 def genetic_algo(budget, marketing_channels_num, marketing_channels, ROI, investment_lower_upper): #mina
     pass
