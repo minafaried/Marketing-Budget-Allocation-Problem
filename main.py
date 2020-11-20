@@ -13,17 +13,17 @@ def reuse_the_nonallocated_budget(chromosome,marketing_channels_num,tempbudged,R
                     max = ROI[k]
             # print(tempbudged+chromosome[index],investment_lower_upper[index][1])
             if investment_lower_upper[index][1] >= tempbudged + chromosome[index]:
-                print("before :", tempbudged, chromosome, tempbudged)
+                #print("before :", tempbudged, chromosome)
                 chromosome[index] += tempbudged
                 allmax.append(ROI[index])
                 tempbudged = 0
             else:
-                print("before :",tempbudged, chromosome,investment_lower_upper[index][1]-chromosome[index])
+                #print("before :",tempbudged, chromosome,investment_lower_upper[index][1]-chromosome[index])
                 temp = investment_lower_upper[index][1] - chromosome[index]
                 chromosome[index] += temp
                 tempbudged -= temp
                 allmax.append(ROI[index])
-            print("after :",tempbudged, chromosome)
+            #print("after :",tempbudged, chromosome)
             # print(allmax)
 
             if len(allmax) == marketing_channels_num and tempbudged != 0:
@@ -32,6 +32,36 @@ def reuse_the_nonallocated_budget(chromosome,marketing_channels_num,tempbudged,R
                 break
         return chromosome
 
+def fix_over_allocated_budget(chromosome,marketing_channels_num,tempbudged,ROI,investment_lower_upper):
+    allmin = []
+    # print(chromosome)
+    while (tempbudged != 0):
+        min = 1000000000
+        index = 0
+        for k in range(marketing_channels_num):
+            if (ROI[k] < min) and (ROI[k] not in allmin):
+                index = k
+                min = ROI[k]
+        # print(tempbudged+chromosome[index],investment_lower_upper[index][1])
+        if investment_lower_upper[index][0] <= chromosome[index]+tempbudged:
+            #print("before1 :", tempbudged, chromosome)
+            chromosome[index] += tempbudged
+            allmin.append(ROI[index])
+            tempbudged = 0
+        else:
+            #print("before2 :", tempbudged, chromosome, investment_lower_upper[index][1] - chromosome[index])
+            temp = chromosome[index]-investment_lower_upper[index][0]
+            chromosome[index] -= temp
+            tempbudged += temp
+            allmin.append(ROI[index])
+        #print("after :", tempbudged, chromosome)
+        # print(allmax)
+
+        if len(allmin) == marketing_channels_num and tempbudged != 0:
+            print("can not use all budget population :")
+            print(tempbudged)
+            break
+    return chromosome
 
 def init(population_num, marketing_channels_num,budget,ROI,investment_lower_upper):  #mina
     population = []
@@ -39,18 +69,20 @@ def init(population_num, marketing_channels_num,budget,ROI,investment_lower_uppe
         chromosome = []
         tempbudged=budget
         for j in range(0, marketing_channels_num):
-            r = random.uniform(investment_lower_upper[j][0], investment_lower_upper[j][1])
-            if tempbudged-r>=0:
-                tempbudged-=r
-                chromosome.append(r)
-            elif tempbudged<r and tempbudged !=0:
-                chromosome.append(tempbudged)
-                tempbudged=0
-            else:
-                chromosome.append(0)
-        chromosome=reuse_the_nonallocated_budget(chromosome,marketing_channels_num,tempbudged,ROI,investment_lower_upper)
+            r =random.uniform(investment_lower_upper[j][0], investment_lower_upper[j][1])
+            chromosome.append(r)
+        #print(chromosome)
+        sumofchromosome=sum(chromosome)
+        if sumofchromosome>budget:
+            #print("over budget")
+            chromosome=fix_over_allocated_budget(chromosome,marketing_channels_num,budget-sumofchromosome,ROI,investment_lower_upper)
+        elif sumofchromosome<budget:
+            #print("reuses budget")
+            chromosome=reuse_the_nonallocated_budget(chromosome,marketing_channels_num,budget-sumofchromosome,ROI,investment_lower_upper)
+        #print(chromosome)
         population.append(chromosome)
     return population
+
 
 
 def check(population, marketing_channels_num,budget,investment_lower_upper): #mustafa
