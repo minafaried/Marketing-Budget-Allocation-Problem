@@ -1,6 +1,9 @@
 import random
 
-
+population_num=5
+iteration_num=3
+selectionNumber=2
+crossover_probability=.7
 def reuse_the_nonallocated_budget(chromosome,marketing_channels_num,tempbudged,ROI,investment_lower_upper):
         allmax = []
         # print(chromosome)
@@ -195,8 +198,13 @@ def select_the_fittest(population,ROI):  #peter
     return population[fittest_index]
 
 def genetic_algo(budget, marketing_channels_num, marketing_channels, ROI, investment_lower_upper): #mina
-    pass
+    population=init(population_num,marketing_channels_num,budget,ROI,investment_lower_upper)
 
+    for i in range(0,iteration_num):
+        selection_out=fitness_and_selection(population,marketing_channels_num,ROI,selectionNumber)
+        crossover_out=crossover(selection_out,marketing_channels_num)
+        mutation_out=mutation_uniform(crossover_out,investment_lower_upper)
+        population=replacement(population,mutation_out,ROI)
 def MBAP_input(): #mustafa
     pass
 
