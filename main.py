@@ -4,6 +4,9 @@ population_num=5
 iteration_num=3
 selectionNumber=2
 crossover_probability=.7
+kConstant = 2
+generationNumber = 20
+
 def reuse_the_nonallocated_budget(chromosome,marketing_channels_num,tempbudged,ROI,investment_lower_upper):
         allmax = []
         # print(chromosome)
@@ -88,12 +91,75 @@ def init(population_num, marketing_channels_num,budget,ROI,investment_lower_uppe
 
 
 
-def check(population, marketing_channels_num,budget,investment_lower_upper): #mustafa
-    pass
+def check(population,marketing_channels_num, ROI,budget,investment_lower_upper):
+  for i in range(0,len(population)): # loop for all population
+    chromosomeValue = 0
+    for j in range (0,len(population[i])): # loop for all boundries in each chromosome
+      if (population[i][j] > investment_lower_upper[j][1]): # if cell is greater than upper
+        population[i][j] = investment_lower_upper[j][1] # cell = upper
+        chromosomeValue += population[i][j] # calculate chromsome's buget
+      elif (population[i][j] < investment_lower_upper[j][0]):# if cell is smaller than lower
+        population[i][j] = investment_lower_upper[j][0] # cell = lower
+        chromosomeValue += population[i][j] 
+      else: # if cell is smaller than upper and greater than lower
+        chromosomeValue += population[i][j] # calculate chromsome's buget
+    if chromosomeValue == budget: # budget full used
+      continue
+    elif chromosomeValue < budget:# still there are budgets
+      population[i] = reuse_the_nonallocated_budget(population[i],marketing_channels_num,budget - chromosomeValue,ROI,investment_lower_upper)
+    else:  #if chromosome has buget more than mine
+        population[i] = fix_over_allocated_budget(population[i],marketing_channels_num,budged - chromosomeValue,ROI,investment_lower_upper)
+  return population
 
+def fitness_and_selection(population, kConstant, ROI, selectionNumber): #mustafa
+    
+    if selectionNumber % 2 != 0:
+      print("Selection Number Must be EVEN")
+      return None
+    fitness = []
+    commulative = []
+    take_K_Number = []
+    selection = []
+    for i in range (0, len(population)):
+        fitnessProcess = 0
+        for j in range(0, len(population[i])):
+            fitnessProcess += ROI[j] * population[i][j]
+        fitness.append(fitnessProcess)
+    #print("Fintess: ",fitness)
+    
+    while (len(selection) != selectionNumber):
+      if len(selection) > selectionNumber :
+        print("Error")
+        return None
+      take_K_Number = []
+      while (len(take_K_Number) <  kConstant):
+        print("takeNumLength: ", len(take_K_Number))
+        print("takeNumber: ", take_K_Number)
+        if( len(take_K_Number) > kConstant):
+          print("ERROR")
+          return None
+        randNum = random.randrange(0, len(fitness))
+        print("Population: ", population)
+        print("Fintess: ",fitness)
+        print("RandNum: ", randNum)
+        print("fitness chosen: ", fitness[randNum] )
+        if fitness[randNum] in take_K_Number:
+          continue
+        else:
+          take_K_Number.append(fitness[randNum])
+      print ("Take K Number:",take_K_Number)
+      highest = take_K_Number[0]
+      for take in range (1,len(take_K_Number)):
+          if take_K_Number[take] > highest:
+            highest = take_K_Number[take]
+      print("Highest", highest)
+      for pop in range (0, len(fitness)):
+        if highest == fitness[pop] and population[pop] not in selection:
+          selection.append(population[pop])      
+        else:
+          continue
+    return selection
 
-def fitness_and_selection(population, marketing_channels_num, ROI, selectionNumber): #mustafa
-    pass
 
 
 def crossover(selection,marketing_channels_num): #mina
