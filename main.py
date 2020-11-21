@@ -271,11 +271,66 @@ def genetic_algo(budget, marketing_channels_num, marketing_channels, ROI, invest
         crossover_out=crossover(selection_out,marketing_channels_num)
         mutation_out=mutation_uniform(crossover_out,investment_lower_upper)
         population=replacement(population,mutation_out,ROI)
-def MBAP_input(): #mustafa
-    pass
+def MBAP_input():
+        channelsName = []
+        ROI = []
+        lower_upper = []
+        budget = int(input("Enter the marketing budget (in thousands): "))
+        channelNumbers = int(input("Enter the number of marketing channels: "))    
+        for i in range (0,int(channelNumbers)):
+                tempLoUp = []
+                channelName = str(input("Enter channel Name: "))
+                channelROI = int(input("Enter channel ROI: "))
+                channelsName.append(channelName)
+                ROI.append(channelROI)
+                channelLower = str(input("Enter channel Lower Bound: "))
+                channelUpper = str(input("Enter channel Upper Bound: "))
+                if (channelLower == 'x'):
+                        channelLower = 0
+                        tempLoUp.append(channelLower)
+                else:
+                        tempLoUp.append(int(channelLower))
+                if channelUpper == 'x':
+                        channelUpper = 100
+                        calcChannelUpper = (budget * channelUpper) / 100
+                        tempLoUp.append(calcChannelUpper)
+                else:
+                        calcChannelUpper = (int(budget) * int(channelUpper)) / 100
+                        tempLoUp.append(calcChannelUpper)
 
-def MBAP(): #mustafa
-    pass
+                if channelLower > channelUpper:
+                        print("Lower boundry can't be greater than Upper Bound plz try again")
+                        exit(0)
+                lower_upper.append(tempLoUp)
+        return [budget, channelNumbers,channelsName,ROI,lower_upper]
+        
+def final_result():
+        for currentGeneration in range (0, generationNumber):
+                inputs = MBAP_input()
+                #print(inputs)
+                budget = inputs[0]
+                marketing_channels_num = inputs[1]
+                channelsName = inputs[2]
+                ROI = inputs[3]
+                investment_lower_upper = inputs[4]
+                #budget = 130
+                #marketing_channels_num = 2
+                #channelsName = ['google','facebook']
+                #ROI = [45,60]
+                #investment_lower_upper = [[23,40],[30,60]]
+                temp_population = init(population_num, marketing_channels_num,budget,ROI,investment_lower_upper)
+                print(temp_population)
+                real_population = check(temp_population,marketing_channels_num, ROI,budget,investment_lower_upper)
+           
+                selection = fitness_and_selection(real_population, kConstant, ROI, selectionNumber)
+   
+                crossOver = crossover(selection,marketing_channels_num)
+                   
+                uniform_mutation = mutation_uniform(crossOver,investment_lower_upper)
 
-def final_result(): #mustafa
-   pass
+                non_uniform_mutation = mutation_non_uniform(crossOver,investment_lower_upper ,generationNumber , currentGeneration)
+
+                replacment = replacement(real_population, uniform_mutation,ROI)
+
+                print("Current Population Result: ", replacment)
+
