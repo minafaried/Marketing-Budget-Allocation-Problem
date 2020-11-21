@@ -303,7 +303,8 @@ def genetic_algo(budget, marketing_channels_num, marketing_channels, ROI, invest
         #print(population)
         selection_out = fitness_and_selection(population, marketing_channels_num, ROI, selectionNumber)
         crossover_out = crossover(selection_out, marketing_channels_num)
-        mutation_out = mutation_uniform(crossover_out, investment_lower_upper)
+        mutation_out = mutation_non_uniform(crossover_out, investment_lower_upper,iteration_num,i)
+        mutation_out=check(mutation_out, marketing_channels_num, ROI, budget, investment_lower_upper)
         population = replacement(population, mutation_out, ROI)
     res= select_the_fittest(population,ROI)
     #print(res)
@@ -359,3 +360,4 @@ def MBAP():
 
 
 MBAP()
+
