@@ -7,6 +7,13 @@ crossover_probability=.7
 kConstant = 2
 generationNumber = 20
 
+
+def calcProfit(chromosome):
+  profit = 0
+  for i in range (0, len(chromosome)):
+        profit += ROI[i] * population[i]
+  return profit 
+
 def all_equal(iterable):
     g = groupby(iterable)
     return next(g, True) and not next(g, False)
@@ -310,32 +317,37 @@ def MBAP_input():
         return [budget, channelNumbers,channelsName,ROI,lower_upper]
         
 def final_result():
-        for currentGeneration in range (0, generationNumber):
-                inputs = MBAP_input()
-                #print(inputs)
-                budget = inputs[0]
-                marketing_channels_num = inputs[1]
-                channelsName = inputs[2]
-                ROI = inputs[3]
-                investment_lower_upper = inputs[4]
-                #budget = 130
-                #marketing_channels_num = 2
-                #channelsName = ['google','facebook']
-                #ROI = [45,60]
-                #investment_lower_upper = [[23,40],[30,60]]
-                temp_population = init(population_num, marketing_channels_num,budget,ROI,investment_lower_upper)
-                print(temp_population)
-                real_population = check(temp_population,marketing_channels_num, ROI,budget,investment_lower_upper)
+  for currentGeneration in range (0, generationNumber):
+    inputs = MBAP_input()
+    #print(inputs)
+    budget = inputs[0]
+    marketing_channels_num = inputs[1]
+    channelsName = inputs[2]
+    ROI = inputs[3]
+    investment_lower_upper = inputs[4]
+    #budget = 130
+    #marketing_channels_num = 2
+    #channelsName = ['google','facebook']
+    #ROI = [45,60]
+    #investment_lower_upper = [[23,40],[30,60]]
+    temp_population = init(population_num, marketing_channels_num,budget,ROI,investment_lower_upper)
+    #print(temp_population)
+    real_population = check(temp_population,marketing_channels_num, ROI,budget,investment_lower_upper)
            
-                selection = fitness_and_selection(real_population, kConstant, ROI, selectionNumber)
+    selection = fitness_and_selection(real_population, kConstant, ROI, selectionNumber)
    
-                crossOver = crossover(selection,marketing_channels_num)
+    crossOver = crossover(selection,marketing_channels_num)
                    
-                uniform_mutation = mutation_uniform(crossOver,investment_lower_upper)
+    uniform_mutation = mutation_uniform(crossOver,investment_lower_upper)
 
-                non_uniform_mutation = mutation_non_uniform(crossOver,investment_lower_upper ,generationNumber , currentGeneration)
+    non_uniform_mutation = mutation_non_uniform(crossOver,investment_lower_upper ,generationNumber , currentGeneration)
 
-                replacment = replacement(real_population, uniform_mutation,ROI)
+    replacment = replacement(real_population, uniform_mutation,ROI)
 
-                print("Current Population Result: ", replacment)
+    print("Current Population Result: ", replacment)
 
+  for i in range (0,20)
+    chromsomeValue = calcProfit(fitestChromosome)
+    f = open("dataFile.txt",a)
+    f.write(chromsomeValue)            
+final_result()
