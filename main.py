@@ -7,6 +7,10 @@ crossover_probability=.7
 kConstant = 2
 generationNumber = 20
 
+def all_equal(iterable):
+    g = groupby(iterable)
+    return next(g, True) and not next(g, False)
+
 def reuse_the_nonallocated_budget(chromosome,marketing_channels_num,tempbudged,ROI,investment_lower_upper):
         allmax = []
         # print(chromosome)
@@ -112,7 +116,8 @@ def check(population,marketing_channels_num, ROI,budget,investment_lower_upper):
   return population
 
 def fitness_and_selection(population, kConstant, ROI, selectionNumber): #mustafa
-    
+    if (all_equal(population) == True):
+      return [population[0], population[1]]
     if selectionNumber % 2 != 0:
       print("Selection Number Must be EVEN")
       return None
