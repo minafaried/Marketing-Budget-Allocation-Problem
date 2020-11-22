@@ -104,14 +104,14 @@ def init(population_num, marketing_channels_num, budget, ROI, investment_lower_u
             chromosome.append(r)
         # print(chromosome)
         sumofchromosome = sum(chromosome)
-        if sumofchromosome > budget:
-            # print("over budget")
-            chromosome = fix_over_allocated_budget(chromosome, marketing_channels_num, budget - sumofchromosome, ROI,
-                                                   investment_lower_upper)
-        elif sumofchromosome < budget:
-            # print("reuses budget")
-            chromosome = reuse_the_nonallocated_budget(chromosome, marketing_channels_num, budget - sumofchromosome,
-                                                       ROI, investment_lower_upper)
+        # if sumofchromosome > budget:
+        #     # print("over budget")
+        #     chromosome = fix_over_allocated_budget(chromosome, marketing_channels_num, budget - sumofchromosome, ROI,
+        #                                            investment_lower_upper)
+        # elif sumofchromosome < budget:
+        #     # print("reuses budget")
+        #     chromosome = reuse_the_nonallocated_budget(chromosome, marketing_channels_num, budget - sumofchromosome,
+        #                                                ROI, investment_lower_upper)
         # print(chromosome)
         population.append(chromosome)
     return population
@@ -155,7 +155,7 @@ def fitness_and_selection(population, kConstant, ROI, selectionNumber):  # musta
         for j in range(0, len(population[i])):
             fitnessProcess += ROI[j] * population[i][j]
         fitness.append(fitnessProcess)
-    # print("Fintess: ",fitness)
+    #print("Fintess: ",fitness)
     while (len(selection) != selectionNumber):
         #print(0)
         if len(selection) > selectionNumber:
@@ -178,22 +178,24 @@ def fitness_and_selection(population, kConstant, ROI, selectionNumber):  # musta
             else:
                 take_K_Number.append(fitness[randNum])
         #print("Take K Number:", take_K_Number)
+        #print(len(take_K_Number))
         highest = take_K_Number[0]
         for take in range(1, len(take_K_Number)):
             if take_K_Number[take] > highest:
                 highest = take_K_Number[take]
         #print("Highest", highest)
         for pop in range(0, len(fitness)):
+            #[11,0,0,0],[0,0,0,8]
             if highest == fitness[pop] and population[pop] not in selection:
                 selection.append(population[pop])
-            else:
-                continue
+                break
+        #print(selection)
+        #print(len(selection),selectionNumber)
     return selection
 
 
 def crossover(selection, marketing_channels_num):  # mina
-    if len(selection)<=1:
-        return selection
+
     r1 = random.randrange(0, marketing_channels_num - 1)
     r2 = random.randrange(0, marketing_channels_num - 1)
     while (r2 == r1):
@@ -299,12 +301,13 @@ def select_the_fittest(population, ROI):  # peter
 
 def genetic_algo(budget, marketing_channels_num, marketing_channels, ROI, investment_lower_upper):  # mina
     population = init(population_num, marketing_channels_num, budget, ROI, investment_lower_upper)
+    population = check(population, marketing_channels_num, ROI, budget, investment_lower_upper)
     for i in range(0, iteration_num):
         #print(population)
-        selection_out = fitness_and_selection(population, marketing_channels_num, ROI, selectionNumber)
+        selection_out = fitness_and_selection(population, kConstant, ROI, selectionNumber)
         crossover_out = crossover(selection_out, marketing_channels_num)
         mutation_out = mutation_non_uniform(crossover_out, investment_lower_upper,iteration_num,i)
-        mutation_out=check(mutation_out, marketing_channels_num, ROI, budget, investment_lower_upper)
+
         population = replacement(population, mutation_out, ROI)
     res= select_the_fittest(population,ROI)
     #print(res)
